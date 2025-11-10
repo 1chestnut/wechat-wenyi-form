@@ -1,0 +1,77 @@
+
+<view class="header-info" style="height: 210rpx; display: block; box-sizing: border-box">
+
+  <view class="form-title" style="position: relative; left: 0rpx; top: 102rpx">温州医学院附属第一医院戒烟门诊登记表</view>
+</view>
+
+
+
+<view class="survey-container" style="height: 1183rpx; display: block; box-sizing: border-box">
+
+  <form bindsubmit="formSubmit">
+
+    <!-- 1. 姓名 -->
+    <view class="form-item">
+      <text class="label">1. 姓名：</text>
+      <input style="position: relative; left: -41rpx; top: 0rpx" class="input" name="name" placeholder="请输入姓名" />
+    </view>
+
+    <!-- 2. 性别 -->
+    <view class="form-item">
+      <text class="label" style="width: 154rpx; display: block; box-sizing: border-box">2. 性别：</text>
+      <radio-group name="gender" class="radio-group" style="position: relative; left: -49rpx; top: 3rpx">
+        <label class="radio-label"><radio value="1"/>男</label>
+        <label class="radio-label"><radio value="2"/>女</label>
+      </radio-group>
+    </view>
+
+    <!-- 3. 年龄 -->
+    <view class="form-item">
+      <text class="label">3. 年龄：</text>
+      <input style="position: relative; left: -41rpx; top: -1rpx" class="input" name="age" type="number" placeholder="请输入年龄"/>
+    </view>
+
+    <!-- 4. 体重 身高 -->
+    <view class="form-item" style="height: 143rpx; display: flex; box-sizing: border-box">
+      <text class="label">4. 体重：</text>
+      <input style="position: relative; left: -51rpx; top: 0rpx; width: 299rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="weight" type="digit"/>
+      <text class="unit" style="position: relative; left: -47rpx; top: 0rpx">kg</text>
+    </view>
+
+    <view class="form-item">
+      <text class="label" style="width: 125rpx; display: block; box-sizing: border-box; left: 0rpx; top: 0rpx">5. 身高：</text>
+      <input style="position: relative; left: -51rpx; top: 0rpx; width: 299rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="height" type="digit"/>
+      <text class="unit" style="position: relative; left: -50rpx; top: -2rpx">cm</text>
+    </view>
+
+    <!-- 5. 文化程度 -->
+    <view class="form-item" style="height: 179rpx; display: flex; box-sizing: border-box">
+      <text class="label" style="height: 54rpx; display: block; box-sizing: border-box">6. 文化程度：</text>
+      <radio-group name="education" class="radio-group" style="height: 181rpx; display: flex; box-sizing: border-box">
+        <label class="radio-label" style="width: 279rpx; display: flex; box-sizing: border-box"><radio value="1"/>小学及以下</label>
+        <label class="radio-label" style="position: relative; left: -53rpx; top: 0rpx"><radio value="2"/>中学</label>
+        <label class="radio-label" style="position: relative; left: 425rpx; top: -91rpx"><radio value="3"/>大学及以上</label>
+      </radio-group>
+    </view>
+
+    <!-- 6. 吸烟 -->
+    <view class="form-item" style="position: relative; left: 0rpx; top: 2rpx; height: 143rpx; display: flex; box-sizing: border-box">
+      <text class="label">7. 开始吸烟年龄：</text>
+      <input style="position: relative; left: 0rpx; top: -2rpx; width: 181rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="smokeStartAge" type="number"/>
+      <text class="unit" style="position: relative; left: 8rpx; top: 0rpx">岁</text>
+    </view>
+
+    <view class="form-item" >
+      <text class="label" style="position: relative; left: 2rpx; top: 2rpx">8. 吸烟年限：</text>
+      <input style="position: relative; left: -18rpx; top: 0rpx; width: 181rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="smokeYears" type="number"/>
+      <text class="unit" style="position: relative; left: 2rpx; top: -2rpx">年</text>
+    </view>
+
+    <!-- 按钮 -->
+    <view class="submit-btn">
+      <button form-type="submit" type="primary">提交问卷</button>
+    </view>
+
+  </form>
+
+</view>

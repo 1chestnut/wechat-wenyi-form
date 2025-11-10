@@ -1,0 +1,68 @@
+<navigation-bar title="尼古丁依赖评估" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="assessment-container">
+  <view class="section-title" >(二) 尼古丁依赖评估和吸烟严重度指数评估</view>
+  <view class="subtitle">尼古丁依赖检测量表（FTND）</view>
+  
+  <form bindsubmit="submitAssessment">
+    <!-- 问题1 -->
+    <view class="question">
+      <text class="question-text">1. 您早晨醒来后多长时间吸第1支烟</text>
+      <radio-group name="q1">
+        <label class="option"><radio value="0" />＞60分钟 (0分)</label>
+        <label class="option"><radio value="1" />31-60分钟 (1分)</label>
+        <label class="option"><radio value="2" />6-30分钟 (2分)</label>
+        <label class="option"><radio value="3" />≤5分钟 (3分)</label>
+      </radio-group>
+    </view>
+    
+    <!-- 问题2 -->
+    <view class="question">
+      <text class="question-text">2. 您是否在许多禁烟场所感到很难控制吸烟的需要？</text>
+      <radio-group name="q2">
+        <label class="option"><radio value="0" />否 (0分)</label>
+        <label class="option"><radio value="1" />是 (1分)</label>
+      </radio-group>
+    </view>
+    
+    <!-- 问题3 -->
+    <view class="question">
+      <text class="question-text">3. 您最不想放弃的是哪一支烟？</text>
+      <radio-group name="q3">
+        <label class="option"><radio value="0" />其他时间 (0分)</label>
+        <label class="option"><radio value="1" />早晨第一支 (1分)</label>
+      </radio-group>
+    </view>
+    
+    <!-- 问题4 -->
+    <view class="question">
+      <text class="question-text">4. 您每天吸多少烟？</text>
+      <radio-group name="q4">
+        <label class="option"><radio value="0" />≤10支 (0分)</label>
+        <label class="option"><radio value="1" />11-20支 (1分)</label>
+        <label class="option"><radio value="2" />21-30支 (2分)</label>
+        <label class="option"><radio value="3" />≥31支 (3分)</label>
+      </radio-group>
+    </view>
+    
+    <!-- 问题5 -->
+    <view class="question">
+      <text class="question-text">5. 您是否在早晨醒来后的第1小时内吸烟最多？</text>
+      <radio-group name="q5">
+        <label class="option"><radio value="0" />否 (0分)</label>
+        <label class="option"><radio value="1" />是 (1分)</label>
+      </radio-group>
+    </view>
+    
+    <!-- 问题6 -->
+    <view class="question">
+      <text class="question-text">6. 如果您患病卧床是否还会吸烟？</text>
+      <radio-group name="q6">
+        <label class="option"><radio value="0" />否 (0分)</label>
+        <label class="option"><radio value="1" />是 (1分)</label>
+      </radio-group>
+    </view>
+
+    <button form-type="submit" type="primary">提交评估</button>
+  </form>
+</view>

@@ -1,0 +1,30 @@
+  <navigation-bar title="呼出气CO浓度评估" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+
+  <!-- 导航栏占位 -->
+  <view class="navigation-placeholder"></view>
+
+  <view class="co-container">
+    <view class="section-title">（三）呼出气CO浓度评估</view>
+    
+    <form bindsubmit="submitCOAssessment">
+      <!-- CO浓度输入 -->
+      <view class="form-item">
+        <text class="label">呼出气CO浓度：</text>
+        <input style="width: 291rpx; display: inline-block; box-sizing: border-box; height: 77rpx" class="input" name="coConcentration" type="digit"  />
+        <text class="unit" style="position: relative; left: 1rpx; top: 6rpx">ppm</text>
+      </view>
+
+      <!-- 最近吸烟时间 -->
+      <view class="form-item" style="height: 458rpx; display: block; box-sizing: border-box">
+        <text class="label">您最近的一支烟是什么时候抽的？</text>
+        <radio-group name="lastSmokeTime">
+          <label class="option"><radio value="1" />1小时之内</label>
+          <label class="option"><radio value="2" />1-12小时之间</label>
+          <label class="option"><radio value="3" />12小时-24小时之间</label>
+          <label class="option"><radio value="4" />24小时之前</label>
+        </radio-group>
+      </view>
+
+      <button form-type="submit" type="primary">提交评估</button>
+    </form>
+  </view>

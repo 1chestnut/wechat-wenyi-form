@@ -1,0 +1,28 @@
+<!-- index.wxml -->
+<view class="container">
+  <view class="recorder-container">
+    <view class="header">
+      <text class="title">录音器</text>
+    </view>
+    
+    <button 
+      class="record-btn {{isRecording ? 'recording' : ''}}" 
+      bindtap="toggleRecord"
+      disabled="{{isSaving || !recorderReady}}"
+    >
+      {{!recorderReady ? '初始化中...' : isRecording ? '停止录音' : '开始录音'}}
+      <text wx:if="{{isSaving}}" class="saving-text">(保存中...)</text>
+    </button>
+    
+    <view class="status-area">
+      <text class="status-text">{{statusText}}</text>
+    </view>
+    
+    <!-- 文件操作区域 -->
+    <view class="action-buttons" wx:if="{{audioSavedPath}}">
+      <button class="action-btn" bindtap="playSavedAudio">播放录音</button>
+      <button class="action-btn" bindtap="getFileDetails">文件信息</button>
+      <button class="action-btn" bindtap="viewAllSavedFiles">查看所有文件</button>
+    </view>
+  </view>
+</view>
