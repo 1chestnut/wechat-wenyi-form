@@ -1,77 +1,202 @@
+<navigation-bar
+  title="温州医学院附属第一医院戒烟门诊登记表"
+  back="{{true}}"
+  color="black"
+  background="transparent"
+></navigation-bar>
 
-<view class="header-info" style="height: 210rpx; display: block; box-sizing: border-box">
+<view class="page">
+  <form class="form" bindsubmit="formSubmit">
 
-  <view class="form-title" style="position: relative; left: 0rpx; top: 102rpx">温州医学院附属第一医院戒烟门诊登记表</view>
-</view>
+    <view class="card">
+      <view class="section-header">
+        <text class="section-title">个人信息</text>
+        <text class="section-tip">必填</text>
+      </view>
 
+      <view class="field required">
+        <text class="field-label">姓名</text>
+        <view class="field-content">
+          <input
+            class="field-input"
+            name="vin"
+            maxlength="17"
+            placeholder="请输入真实姓名"
+            placeholder-class="placeholder-text"
+          />
+        </view>
+      </view>
 
+      <view class="field required">
+        <text class="field-label">性别</text>
+        <view class="field-content">
+          <view 
+            class="gender-slider-container"
+            bindtouchstart="onGenderTouchStart"
+            bindtouchmove="onGenderTouchMove"
+            bindtouchend="onGenderTouchEnd"
+          >
+            <view class="gender-slider-track">
+              <view 
+                class="gender-slider-indicator {{gender === '女' ? 'right' : 'left'}}"
+              ></view>
+            </view>
+            <view class="gender-options">
+              <view 
+                class="gender-option {{gender === '男' ? 'active' : ''}}"
+                data-value="男"
+                bindtap="onGenderSelect"
+              >
+                <text>男</text>
+              </view>
+              <view 
+                class="gender-option {{gender === '女' ? 'active' : ''}}"
+                data-value="女"
+                bindtap="onGenderSelect"
+              >
+                <text>女</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
 
-<view class="survey-container" style="height: 1183rpx; display: block; box-sizing: border-box">
+      <view class="field required">
+        <text class="field-label">年龄</text>
+        <view class="field-content">
+          <input
+            type="number"
+            class="field-input"
+            name="age"
+            minlength="1"
+            maxlength="3"
+            bindinput="onInputAge"
+            bindblur="onBlurAge"
+            value="{{age}}"
+            placeholder="请输入真实年龄"
+            placeholder-class="placeholder-text"
+          />
+        </view>
+      </view>
 
-  <form bindsubmit="formSubmit">
+      <view class="field required">
+        <text class="field-label">体重</text>
+        <view class="field-content">
+          <view class="weight-input-group">
+            <input
+              type="number"
+              class="weight-input weight-integer"
+              name="weightInteger"
+              value="{{weightInteger}}"
+              placeholder="65"
+              placeholder-class="placeholder-text"
+              bindinput="onWeightIntegerInput"
+              maxlength="3"
+            />
+            <text class="weight-dot">.</text>
+            <input
+              type="number"
+              class="weight-input weight-decimal"
+              name="weightDecimal"
+              value="{{weightDecimal}}"
+              placeholder="5"
+              placeholder-class="placeholder-text"
+              bindinput="onWeightDecimalInput"
+              maxlength="1"
+            />
+            <text class="weight-unit">kg</text>
+          </view>
+        </view>
+      </view>
 
-    <!-- 1. 姓名 -->
-    <view class="form-item">
-      <text class="label">1. 姓名：</text>
-      <input style="position: relative; left: -41rpx; top: 0rpx" class="input" name="name" placeholder="请输入姓名" />
+      <view class="field required">
+        <text class="field-label">身高</text>
+        <view class="field-content">
+          <view class="height-input-group">
+            <input
+              type="number"
+              class="field-input height-input"
+              name="height"
+              value="{{height}}"
+              placeholder="例如，170"
+              placeholder-class="placeholder-text"
+              bindinput="onHeightInput"
+              maxlength="3"
+            />
+            <text class="height-unit">cm</text>
+          </view>
+        </view>
+      </view>
     </view>
 
-    <!-- 2. 性别 -->
-    <view class="form-item">
-      <text class="label" style="width: 154rpx; display: block; box-sizing: border-box">2. 性别：</text>
-      <radio-group name="gender" class="radio-group" style="position: relative; left: -49rpx; top: 3rpx">
-        <label class="radio-label"><radio value="1"/>男</label>
-        <label class="radio-label"><radio value="2"/>女</label>
-      </radio-group>
+    <view class="card">
+      <view class="section-header">
+        <text class="section-title">文化程度</text>
+        <text class="section-tip">必选</text>
+      </view>
+
+      <view class="field">
+          <radio-group name="education" class="education-radio-group">
+            <label class="education-radio-label"><radio value="1"/>小学以下或小学</label>
+            <label class="education-radio-label"><radio value="2"/>初中</label>
+            <label class="education-radio-label"><radio value="3"/>高中</label>
+            <label class="education-radio-label" ><radio value="4"/>大学或大学以上</label>
+          </radio-group>
+      </view>
     </view>
 
-    <!-- 3. 年龄 -->
-    <view class="form-item">
-      <text class="label">3. 年龄：</text>
-      <input style="position: relative; left: -41rpx; top: -1rpx" class="input" name="age" type="number" placeholder="请输入年龄"/>
+    <view class="card">
+      <view class="section-header">
+        <text class="section-title">吸烟信息</text>
+        <text class="section-tip">必填</text>
+      </view>
+
+      <view class="field required">
+        <text class="field-label">开始吸烟的年龄</text>
+        <view class="field-content">
+          <view class="smoke-age-input-group">
+            <input
+              type="number"
+              class="field-input smoke-input"
+              name="smokeStartAge"
+              value="{{smokeStartAge}}"
+              placeholder="例如，16"
+              placeholder-class="placeholder-text"
+              maxlength="3"
+              minlength="1"
+              bindinput="onInputSmokeStartAge"
+              bindblur="onBlurSmokeStartAge"
+            />
+            <text class="height-unit">岁</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="field required">
+        <text class="field-label">吸烟年限</text>
+        <view class="field-content">
+          <view class="smoke-age-input-group">
+            <input
+              type="number"
+              class="field-input smoke-input"
+              name="smokePeriod"
+              value="{{smokePeriod}}"
+              placeholder="例如，10"
+              placeholder-class="placeholder-text"
+              bindinput="onInputSmokePeriod"
+              maxlength="3"
+              minlength="1"
+              bindblur="onBlurSmokePeriod"
+            />
+            <text class="height-unit">年</text>
+          </view>
+        </view>
+      </view>
     </view>
 
-    <!-- 4. 体重 身高 -->
-    <view class="form-item" style="height: 143rpx; display: flex; box-sizing: border-box">
-      <text class="label">4. 体重：</text>
-      <input style="position: relative; left: -51rpx; top: 0rpx; width: 299rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="weight" type="digit"/>
-      <text class="unit" style="position: relative; left: -47rpx; top: 0rpx">kg</text>
+    <view class="submit-wrapper">
+      <button form-type="submit" type="primary">确认添加</button>
     </view>
-
-    <view class="form-item">
-      <text class="label" style="width: 125rpx; display: block; box-sizing: border-box; left: 0rpx; top: 0rpx">5. 身高：</text>
-      <input style="position: relative; left: -51rpx; top: 0rpx; width: 299rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="height" type="digit"/>
-      <text class="unit" style="position: relative; left: -50rpx; top: -2rpx">cm</text>
-    </view>
-
-    <!-- 5. 文化程度 -->
-    <view class="form-item" style="height: 179rpx; display: flex; box-sizing: border-box">
-      <text class="label" style="height: 54rpx; display: block; box-sizing: border-box">6. 文化程度：</text>
-      <radio-group name="education" class="radio-group" style="height: 181rpx; display: flex; box-sizing: border-box">
-        <label class="radio-label" style="width: 279rpx; display: flex; box-sizing: border-box"><radio value="1"/>小学及以下</label>
-        <label class="radio-label" style="position: relative; left: -53rpx; top: 0rpx"><radio value="2"/>中学</label>
-        <label class="radio-label" style="position: relative; left: 425rpx; top: -91rpx"><radio value="3"/>大学及以上</label>
-      </radio-group>
-    </view>
-
-    <!-- 6. 吸烟 -->
-    <view class="form-item" style="position: relative; left: 0rpx; top: 2rpx; height: 143rpx; display: flex; box-sizing: border-box">
-      <text class="label">7. 开始吸烟年龄：</text>
-      <input style="position: relative; left: 0rpx; top: -2rpx; width: 181rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="smokeStartAge" type="number"/>
-      <text class="unit" style="position: relative; left: 8rpx; top: 0rpx">岁</text>
-    </view>
-
-    <view class="form-item" >
-      <text class="label" style="position: relative; left: 2rpx; top: 2rpx">8. 吸烟年限：</text>
-      <input style="position: relative; left: -18rpx; top: 0rpx; width: 181rpx; display: block; box-sizing: border-box; height: 82rpx" class="input-short" name="smokeYears" type="number"/>
-      <text class="unit" style="position: relative; left: 2rpx; top: -2rpx">年</text>
-    </view>
-
-    <!-- 按钮 -->
-    <view class="submit-btn">
-      <button form-type="submit" type="primary">提交问卷</button>
-    </view>
-
   </form>
-
 </view>
+
