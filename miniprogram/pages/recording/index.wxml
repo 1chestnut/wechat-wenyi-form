@@ -1,28 +1,62 @@
 <!-- index.wxml -->
 <view class="container">
   <view class="recorder-container">
+    <!-- 顶部标题区域 -->
     <view class="header">
-      <text class="title">录音器</text>
+      <text class="title">语音录制</text>
+      <text class="subtitle">长按录制，松开结束</text>
     </view>
     
-    <button 
-      class="record-btn {{isRecording ? 'recording' : ''}}" 
-      bindtap="toggleRecord"
-      disabled="{{isSaving || !recorderReady}}"
-    >
-      {{!recorderReady ? '初始化中...' : isRecording ? '停止录音' : '开始录音'}}
-      <text wx:if="{{isSaving}}" class="saving-text">(保存中...)</text>
-    </button>
+    <!-- 波形显示区域 -->
+    <view class="wave-container" wx:if="{{recorderReady}}" style="width: 608rpx; height: 381rpx; display: flex; box-sizing: border-box">
+      <view class="wave-bars">
+        <view 
+          class="wave-bar {{isRecording ? 'active' : ''}}" 
+          wx:for="{{waveBars}}" 
+          wx:key="index"
+          style="height: {{isRecording ? item.height : '20rpx'}}; animation-delay: {{item.delay}}ms;"
+        ></view>
+      </view>
+      <view class="time-display">
+        <text class="time-text">{{formatTime(recordingDuration)}}</text>
+      </view>
+    </view>
     
+    <!-- 录音按钮 -->
+    <view class="record-section">
+      <view 
+        class="record-btn-outer {{isRecording ? 'pulsating' : ''}}"
+        bindtouchstart="startRecord"
+        bindtouchend="stopRecord"
+        bindtouchcancel="stopRecord"
+      >
+        <view class="record-btn-inner {{isRecording ? 'recording' : ''}}">
+          <view class="record-icon">
+            <view class="mic-icon {{isRecording ? 'active' : ''}}"></view>
+          </view>
+        </view>
+      </view>
+      <text class="record-hint">{{isRecording ? '松开结束' : '按住录音'}}</text>
+    </view>
+    
+    <!-- 状态显示 -->
     <view class="status-area">
-      <text class="status-text">{{statusText}}</text>
+      <text class="status-text {{isRecording ? 'recording' : ''}}">{{statusText}}</text>
     </view>
     
     <!-- 文件操作区域 -->
-    <view class="action-buttons" wx:if="{{audioSavedPath}}">
-      <button class="action-btn" bindtap="playSavedAudio">播放录音</button>
-      <button class="action-btn" bindtap="getFileDetails">文件信息</button>
-      <button class="action-btn" bindtap="viewAllSavedFiles">查看所有文件</button>
+    <view class="action-buttons" wx:if="{{audioSavedPath && !isRecording}}">
+      <view class="action-row">
+        <view class="action-btn play" bindtap="playSavedAudio">
+          <text>播放</text>
+        </view>
+        <view class="action-btn info" bindtap="getFileDetails">
+          <text>详情</text>
+        </view>
+        <view class="action-btn list" bindtap="viewAllSavedFiles">
+          <text>列表</text>
+        </view>
+      </view>
     </view>
   </view>
 </view>

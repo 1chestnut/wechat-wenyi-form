@@ -49,6 +49,7 @@ exports.main = async (event, context) => {
     const dbData = {
       openid: OPENID,
       filePath: recordingData.filePath,
+      fileID: recordingData.fileID,
       duration: recordingData.duration,
       fileSize: recordingData.fileSize,
       durationFormatted: processedData.durationFormatted,
@@ -74,6 +75,7 @@ exports.main = async (event, context) => {
       data: {
         _id: res._id,
         filePath: recordingData.filePath,
+        fileID: recordingData.fileID,
         duration: recordingData.duration,
         fileSize: recordingData.fileSize,
         durationFormatted: processedData.durationFormatted,

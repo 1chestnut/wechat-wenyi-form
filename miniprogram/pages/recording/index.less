@@ -1,6 +1,6 @@
 /* index.wxss */
 .container {
-  padding: 40rpx;
+  padding: 0;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
@@ -9,95 +9,262 @@
 }
 
 .recorder-container {
-  width: 90%;
-  background-color: white;
-  border-radius: 30rpx;
-  padding: 50rpx 40rpx;
-  box-shadow: 0 15rpx 40rpx rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 60rpx 40rpx;
+  box-sizing: border-box;
 }
 
+/* 头部标题 */
 .header {
-  width: 100%;
   text-align: center;
-  margin-bottom: 40rpx;
+  margin-bottom: 80rpx;
+  margin-top: 40rpx;
 }
 
 .title {
-  font-size: 42rpx;
+  font-size: 48rpx;
   font-weight: bold;
-  color: #2c3e50;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 16rpx;
 }
 
-.record-btn {
-  width: 240rpx;
-  height: 240rpx;
-  border-radius: 50%;
-  background-color: #3498db;
-  color: white;
-  font-size: 34rpx;
-  font-weight: bold;
+.subtitle {
+  font-size: 45rpx;
+  color: #b0b3c1;
+}
+
+/* 波形容器 */
+.wave-container {
+  width: 100%;
+  height: 200rpx;
+  margin-bottom: 80rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 8rpx 20rpx rgba(52, 152, 219, 0.4);
-  transition: all 0.3s;
-  border: none;
-  margin-bottom: 40rpx;
 }
 
-.record-btn.recording {
-  background-color: #e74c3c;
-  transform: scale(1.05);
-  box-shadow: 0 8rpx 20rpx rgba(231, 76, 60, 0.4);
-}
-
-.record-btn:disabled {
-  background-color: #95a5a6;
-  transform: scale(1);
-}
-
-.saving-text {
-  font-size: 24rpx;
-  margin-top: 10rpx;
-  opacity: 0.8;
-}
-
-.status-area {
-  margin-bottom: 30rpx;
-  text-align: center;
-  min-height: 60rpx;
-}
-
-.status-text {
-  font-size: 28rpx;
-  color: #7f8c8d;
-}
-
-.action-buttons {
-  width: 100%;
+/* 修改波形相关样式 */
+.wave-bars {
   display: flex;
-  flex-direction: column;
-  gap: 20rpx;
+  align-items: center;
+  justify-content: center;
+  height: 120rpx;
+  gap: 6rpx; /* 减小间距，让波形更密集 */
+}
+
+.wave-bar {
+  width: 13rpx; /* 减小宽度，让波形更密集 */
+  background: linear-gradient(to top, #667eea, #764ba2);
+  border-radius: 5rpx;
+  transition: height 0.1s ease; /* 更快的过渡效果，让波形响应更灵敏 */
+}
+
+.wave-bar.active {
+  background: linear-gradient(to top, #ff6b6b, #ff8e8e);
+}
+
+@keyframes waveAnimation {
+  0%, 100% { transform: scaleY(0.6); opacity: 0.6; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes waveAnimationActive {
+  0%, 100% { transform: scaleY(0.8); opacity: 0.8; }
+  50% { transform: scaleY(1.2); opacity: 1; }
+}
+
+/* 时间显示 */
+.time-display {
   margin-top: 30rpx;
 }
 
-.action-btn {
-  width: 100%;
-  height: 80rpx;
-  border-radius: 40rpx;
-  font-size: 28rpx;
+.time-text {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+}
+
+/* 录音按钮区域 */
+.record-section {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  margin-bottom: 60rpx;
+}
+
+.record-btn-outer {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  display: flex;
   justify-content: center;
-  background-color: #2ecc71;
-  color: white;
-  border: none;
+  align-items: center;
+  margin-bottom: 30rpx;
+  transition: all 0.3s ease;
+}
+
+.record-btn-outer.pulsating {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+  70% { box-shadow: 0 0 0 30rpx rgba(255, 107, 107, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+}
+
+.record-btn-inner {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.record-btn-inner.recording {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  transform: scale(0.95);
+}
+
+.record-icon {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mic-icon {
+  width: 40rpx;
+  height: 60rpx;
+  background: #ffffff;
+  border-radius: 20rpx 20rpx 0 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.mic-icon::before {
+  content: '';
+  position: absolute;
+  width: 24rpx;
+  height: 24rpx;
+  background: #ffffff;
+  border-radius: 50%;
+  bottom: -12rpx;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mic-icon::after {
+  content: '';
+  position: absolute;
+  width: 16rpx;
+  height: 16rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mic-icon.active::after {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  animation: recordingDot 1s infinite;
+}
+
+@keyframes recordingDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.record-hint {
+  font-size: 50rpx;
+  color: #b0b3c1;
+  text-align: center;
+}
+
+/* 状态区域 */
+.status-area {
+  margin-bottom: 40rpx;
+  text-align: center;
+  min-height: 60rpx;
+  position: relative;
+   left: 5rpx; top: 20rpx
+}
+
+.status-text {
+  font-size: 50rpx;
+  color: #b0b3c1;
+  transition: all 0.3s ease;
+  position: relative; 
+  left: 7rpx; top: -62rpx
+}
+
+.status-text.recording {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+/* 操作按钮 */
+/* 操作按钮 */
+.action-buttons {
+  width: 100%;
+  margin-top: 40rpx;
+}
+
+.action-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 30rpx;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 添加垂直居中 */
+  padding: 20rpx 30rpx; /* 增加内边距，让格子更大 */
+  border-radius: 25rpx; /* 稍微增加圆角 */
+  background: rgba(255, 255, 255, 0.15); /* 稍微增加背景透明度 */
+  backdrop-filter: blur(10px);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  min-width: 120rpx; /* 设置最小宽度，确保格子大小一致 */
+  min-height: 120rpx; /* 设置最小高度，让格子更方正 */
+  text-align: center; /* 文字居中 */
 }
 
 .action-btn:active {
-  opacity: 0.8;
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+
+.action-btn text {
+  font-size: 32rpx; /* 增大文字 */
+  color: #ffffff;
+  font-weight: 500; /* 增加字重，让文字更清晰 */
+  text-align: center;
+  width: 100%; /* 确保文字区域宽度100% */
+}
+
+.action-btn text {
+  font-size: 40rpx;
+  color: #ffffff;
+  text-align: center;
 }

@@ -10,6 +10,10 @@ interface PageData {
   audioSavedPath: string;
   recordingDuration: number;
   fileSize: number;
+  waveBars: any[];
+  waveInterval: any;
+  currentVolume: number;
+  maxVolume: number;
 }
 
 // 定义录音相关类型
@@ -21,6 +25,11 @@ interface RecordStopResult {
   tempFilePath: string;
   duration: number;
   fileSize: number;
+}
+
+interface RecordFrameResult {
+  frameBuffer: ArrayBuffer;
+  isLastFrame: boolean;
 }
 
 // 云函数返回类型
@@ -40,10 +49,17 @@ Page({
     recorderReady: false,
     audioSavedPath: '',
     recordingDuration: 0,
-    fileSize: 0
+    fileSize: 0,
+    waveBars: [],
+    waveInterval: null,
+    currentVolume: 0,
+    maxVolume: 1000
   } as PageData,
 
   recorderManager: null as any,
+  recordingStartTime: 0,
+  recordingTimer: null as any,
+  volumeUpdateInterval: null as any,
 
   onLoad: function() {
     const sessionId = wx.getStorageSync('currentSessionId') || (getApp() as any).globalData.currentSessionId;
@@ -51,6 +67,85 @@ Page({
     console.log('录音页面加载，当前会话ID:', sessionId);
 
     this.initRecorder();
+    this.initWaveBars();
+  },
+
+  // 初始化波形条
+  initWaveBars: function() {
+    const bars = [];
+    for (let i = 0; i < 20; i++) {
+      bars.push({
+        height: '20rpx',
+        delay: Math.random() * 1000
+      });
+    }
+    this.setData({ waveBars: bars });
+  },
+
+  // 开始波形动画 - 基于音量
+  startWaveAnimation: function() {
+    const that = this;
+    
+    if (this.volumeUpdateInterval) {
+      clearInterval(this.volumeUpdateInterval);
+    }
+    
+    this.volumeUpdateInterval = setInterval(() => {
+      if (!that.data.isRecording) return;
+      
+      const newBars = that.data.waveBars.map((bar, index) => {
+        const baseHeight = 20 + (that.data.currentVolume / that.data.maxVolume) * 80;
+        const randomFactor = 0.7 + Math.random() * 0.6;
+        const wavePattern = Math.sin(Date.now() / 200 + index * 0.3) * 10;
+        
+        const height = Math.max(20, Math.min(100, baseHeight * randomFactor + wavePattern));
+        
+        return {
+          height: height + 'rpx',
+          delay: bar.delay
+        };
+      });
+      
+      that.setData({ waveBars: newBars });
+    }, 100);
+  },
+
+  // 停止波形动画
+  stopWaveAnimation: function() {
+    if (this.volumeUpdateInterval) {
+      clearInterval(this.volumeUpdateInterval);
+      this.volumeUpdateInterval = null;
+    }
+    
+    const resetBars = this.data.waveBars.map(bar => ({
+      height: '20rpx',
+      delay: bar.delay
+    }));
+    this.setData({ 
+      waveBars: resetBars,
+      currentVolume: 0 
+    });
+  },
+
+  // 计算音频数据的音量（RMS）
+  calculateVolume: function(arrayBuffer: ArrayBuffer): number {
+    const data = new Int16Array(arrayBuffer);
+    let sum = 0;
+    
+    for (let i = 0; i < data.length; i++) {
+      sum += data[i] * data[i];
+    }
+    
+    const rms = Math.sqrt(sum / data.length);
+    return rms;
+  },
+
+  // 格式化时间显示
+  formatTime: function(milliseconds: number) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   },
 
   initRecorder: function() {
@@ -62,7 +157,7 @@ Page({
 
       this.setData({
         recorderReady: true,
-        statusText: '准备就绪，点击开始录音'
+        statusText: '准备就绪，长按开始录音'
       });
 
       console.log('录音管理器初始化成功');
@@ -83,46 +178,104 @@ Page({
     if (!this.recorderManager) return;
 
     this.recorderManager.onStart(() => {
-      that.setData({ isRecording: true, statusText: '录音中...' });
+      that.setData({ 
+        isRecording: true, 
+        statusText: '录音中...',
+        recordingDuration: 0
+      });
+      that.startWaveAnimation();
+      
+      that.recordingStartTime = Date.now();
+      that.recordingTimer = setInterval(() => {
+        const duration = Date.now() - that.recordingStartTime;
+        that.setData({ recordingDuration: duration });
+      }, 1000);
     });
 
     this.recorderManager.onStop((res: RecordStopResult) => {
       const tempFilePath = res.tempFilePath;
-      that.setData({ isRecording: false, recordingDuration: res.duration, fileSize: res.fileSize, statusText: '正在保存...' });
+      that.setData({ 
+        isRecording: false, 
+        recordingDuration: res.duration, 
+        fileSize: res.fileSize, 
+        statusText: '正在保存...' 
+      });
+      
+      that.stopWaveAnimation();
+      if (that.recordingTimer) {
+        clearInterval(that.recordingTimer);
+        that.recordingTimer = null;
+      }
 
       that.saveAudioToLocal(tempFilePath);
     });
 
     this.recorderManager.onError((res: RecordErrorResult) => {
       that.setData({ isRecording: false, statusText: '录音失败，请重试' });
+      that.stopWaveAnimation();
+      if (that.recordingTimer) {
+        clearInterval(that.recordingTimer);
+        that.recordingTimer = null;
+      }
       wx.showToast({ title: `录音失败: ${res.errMsg}`, icon: 'none', duration: 2000 });
+    });
+
+    // 监听音频帧数据，用于计算音量
+    this.recorderManager.onFrameRecorded((res: RecordFrameResult) => {
+      if (!that.data.isRecording) return;
+      
+      const { frameBuffer } = res;
+      if (frameBuffer) {
+        const volume = that.calculateVolume(frameBuffer);
+        
+        let maxVolume = that.data.maxVolume;
+        if (volume > maxVolume * 0.8) {
+          maxVolume = volume * 1.2;
+        } else if (volume < maxVolume * 0.1 && maxVolume > 1000) {
+          maxVolume = Math.max(1000, maxVolume * 0.95);
+        }
+        
+        const smoothVolume = that.data.currentVolume * 0.7 + volume * 0.3;
+        
+        that.setData({ 
+          currentVolume: smoothVolume,
+          maxVolume: maxVolume
+        });
+      }
     });
   },
 
-  toggleRecord: function() {
-    if (!this.recorderManager) {
-      console.error('recorderManager 未初始化，尝试重新初始化');
-      this.initRecorder();
+  // 开始录音（长按）
+  startRecord: function() {
+    if (!this.recorderManager || this.data.isSaving) {
       if (!this.recorderManager) {
-        wx.showToast({ title: '录音功能暂不可用', icon: 'none', duration: 2000 });
-        return;
+        this.initRecorder();
       }
+      return;
     }
+    
+    if (this.data.isRecording) return;
+    
+    this.setData({ 
+      statusText: '准备录音...', 
+      audioSavedPath: '',
+      currentVolume: 0,
+      maxVolume: 1000
+    });
+    this.recorderManager.start({
+      duration: 60000,
+      sampleRate: 16000,
+      numberOfChannels: 1,
+      encodeBitRate: 48000,
+      format: 'aac',
+      frameSize: 50
+    });
+  },
 
-    if (this.data.isSaving) return;
-
-    if (this.data.isRecording) {
+  // 停止录音
+  stopRecord: function() {
+    if (this.data.isRecording && this.recorderManager) {
       this.recorderManager.stop();
-    } else {
-      this.setData({ statusText: '准备录音...', audioSavedPath: '' });
-      this.recorderManager.start({
-        duration: 60000,
-        sampleRate: 16000,
-        numberOfChannels: 1,
-        encodeBitRate: 48000,
-        format: 'aac',
-        frameSize: 50
-      });
     }
   },
 
@@ -137,10 +290,13 @@ Page({
           const savedFilePath = res.savedFilePath;
           console.log('文件保存成功:', savedFilePath);
 
-          this.setData({ audioSavedPath: savedFilePath, isSaving: false, statusText: '录音已保存到本地' });
+          this.setData({ 
+            audioSavedPath: savedFilePath, 
+            isSaving: false, 
+            statusText: '录音已保存到本地' 
+          });
           wx.showToast({ title: '录音已保存', icon: 'success', duration: 2000 });
 
-          // 上传到云存储
           try {
             const cloudPath = `recordings/${Date.now()}_${Math.floor(Math.random() * 1000)}.aac`;
             const uploadRes = await this.uploadToCloud(savedFilePath, cloudPath);
@@ -242,7 +398,9 @@ Page({
 
         wx.showModal({
           title: '文件详细信息',
-          content: `📍 虚拟路径: ${that.data.audioSavedPath}\n📊 文件大小: ${sizeKB} KB\n⏱️ 录音时长: ${durationSec} 秒\n🔒 存储位置: 微信小程序沙盒文件系统`,
+          content: `保存路径: ${that.data.audioSavedPath}\n
+          文件大小: ${sizeKB} KB\n
+          录音时长: ${durationSec} 秒\n`,
           showCancel: false
         });
 
@@ -264,7 +422,7 @@ Page({
         res.fileList.forEach((file: any, index: number) => {
           console.log(`${index + 1}. ${file.filePath} - ${(file.size / 1024).toFixed(1)}KB`);
         });
-        wx.showModal({ title: '文件列表', content: `共有 ${res.fileList.length} 个文件保存在小程序沙盒中`, showCancel: false });
+        wx.showModal({ title: '文件列表', content: `共有 ${res.fileList.length} 个文件已保存`, showCancel: false });
       },
       fail: (err: any) => {
         console.error('获取文件列表失败:', err);
@@ -276,6 +434,15 @@ Page({
   onUnload: function() {
     if (this.data.isRecording && this.recorderManager) {
       this.recorderManager.stop();
+    }
+    this.stopWaveAnimation();
+    if (this.recordingTimer) {
+      clearInterval(this.recordingTimer);
+      this.recordingTimer = null;
+    }
+    if (this.volumeUpdateInterval) {
+      clearInterval(this.volumeUpdateInterval);
+      this.volumeUpdateInterval = null;
     }
   }
 });
